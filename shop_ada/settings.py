@@ -29,7 +29,8 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', cast=bool)
 
 # ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split()
-ALLOWED_HOSTS =  ['127.0.0.1','7cb8-213-109-66-242.ngrok-free.app']
+# ALLOWED_HOSTS =  ['127.0.0.1','7cb8-213-109-66-242.ngrok-free.app']
+ALLOWED_HOSTS = ['127.0.0.10' , '34.159.30.89']
 
 
 # Application definition

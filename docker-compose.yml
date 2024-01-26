@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 
 services: 
   web:
@@ -17,12 +17,16 @@ services:
      - db
      - redis
      - migration
-  
+    env_file:
+     - .env
+     environment:
+     - VIRTUAL_HOST=shop1.freemyip.com
+     - LETSENCRYPT_HOST=shop1.freemyip.com 
   db:
     image: postgres
     restart: always
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       POSTGRES_DB: ubuntu
       POSTGRES_USER: ubuntu
@@ -44,7 +48,7 @@ services:
   redis:
     image: redis
     ports: 
-      - "6379:6379"
+      - "6380:6380"
 
   celery:
     build: .
@@ -61,13 +65,30 @@ services:
       dockerfile: nginx/Dockerfile
     ports:
       - "80:80"
+      - "433:433"
     volumes:
       - static_volume:/usr/src/app/static
       - media_volume:/usr/src/app/media
+      - certs:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
     depends_on:
       - web
+  acme_companion:
+    images: nginxproxy/acme-companion:2.2
+    container_from: acme_companion
+    volumes_from:
+     - nginx
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock:ro
+     - acme:/etc/acme.sh
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
+  certs:
+  vhost:
+  html:
+  acme:
